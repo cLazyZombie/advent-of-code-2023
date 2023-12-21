@@ -34,12 +34,18 @@ mod part1 {
         }
 
         #[test]
-        fn test_solve_part1() {
+        fn test_solve_sample() {
             let input = r#"1abc2
 pqr3stu8vwx
 a1b2c3d4e5f
 treb7uchet"#;
             assert_eq!(solve(input), 142);
+        }
+
+        #[test]
+        fn test_solve() {
+            let input = include_str!("day01.txt");
+            assert_eq!(solve(input), 53651);
         }
     }
 }
@@ -102,7 +108,7 @@ mod part2 {
         }
 
         #[test]
-        fn test_solve() {
+        fn test_solve_sample() {
             let input = r#"two1nine
 eightwothree
 abcone2threexyz
@@ -111,6 +117,12 @@ xtwone3four
 zoneight234
 7pqrstsixteen"#;
             assert_eq!(solve(input), 281);
+        }
+
+        #[test]
+        fn test_solve() {
+            let input = include_str!("day01.txt");
+            assert_eq!(solve(input), 53894);
         }
     }
 }
