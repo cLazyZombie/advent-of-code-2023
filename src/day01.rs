@@ -5,6 +5,30 @@ fn main() {
     println!("part2: {}", part2::solve(input));
 }
 
+pub fn solve_line_with_mapping(input: &str, mapping: &[(&str, i32)]) -> i32 {
+    // tuple (found_index_in_input, index_in_mapping)
+    let mut left = None;
+    for (idx, &(s, _)) in mapping.iter().enumerate() {
+        let found = input.find(s);
+        match (left, found) {
+            (None, Some(found)) => left = Some((found, idx)),
+            (Some((prev, _)), Some(found)) if found < prev => left = Some((found, idx)),
+            _ => {}
+        }
+    }
+
+    let mut right = None;
+    for (idx, &(s, _)) in mapping.iter().enumerate() {
+        let found = input.rfind(s);
+        match (right, found) {
+            (None, Some(found)) => right = Some((found, idx)),
+            (Some((prev, _)), Some(found)) if found > prev => right = Some((found, idx)),
+            _ => {}
+        }
+    }
+
+    mapping[left.unwrap().1].1 * 10 + mapping[right.unwrap().1].1
+}
 mod part1 {
     pub fn solve(input: &str) -> i32 {
         let mut sum = 0;
@@ -15,10 +39,19 @@ mod part1 {
     }
 
     pub fn solve_line(input: &str) -> i32 {
-        let mut it = input.chars().filter_map(|c| c.to_digit(10));
-        let first = it.next().unwrap();
-        let last = it.last().unwrap_or(first);
-        (first * 10 + last) as i32
+        const MAPPING: &[(&str, i32)] = &[
+            ("1", 1),
+            ("2", 2),
+            ("3", 3),
+            ("4", 4),
+            ("5", 5),
+            ("6", 6),
+            ("7", 7),
+            ("8", 8),
+            ("9", 9),
+        ];
+
+        crate::solve_line_with_mapping(input, MAPPING)
     }
 
     #[cfg(test)]
@@ -52,26 +85,28 @@ treb7uchet"#;
 
 mod part2 {
     pub fn solve_line(input: &str) -> i32 {
-        const REPLACE_FROM: &[&str] = &[
-            "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+        const MAPPING: &[(&str, i32)] = &[
+            ("1", 1),
+            ("2", 2),
+            ("3", 3),
+            ("4", 4),
+            ("5", 5),
+            ("6", 6),
+            ("7", 7),
+            ("8", 8),
+            ("9", 9),
+            ("one", 1),
+            ("two", 2),
+            ("three", 3),
+            ("four", 4),
+            ("five", 5),
+            ("six", 6),
+            ("seven", 7),
+            ("eight", 8),
+            ("nine", 9),
         ];
-        const REPLACE_TO: &[&str] = &["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-        let mut output = String::new();
-        for (idx, _c) in input.char_indices() {
-            for i in 0..REPLACE_FROM.len() {
-                if Some(0) == input[idx..].find(REPLACE_FROM[i]) {
-                    output.push_str(REPLACE_TO[i]);
-                    break;
-                }
-
-                if Some(0) == input[idx..].find(REPLACE_TO[i]) {
-                    output.push_str(REPLACE_TO[i]);
-                    break;
-                }
-            }
-        }
-        crate::part1::solve_line(&output)
+        crate::solve_line_with_mapping(input, MAPPING)
     }
 
     pub fn solve(input: &str) -> i32 {
