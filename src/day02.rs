@@ -18,7 +18,7 @@ struct Cube {
 }
 
 fn parse_game(input: &str) -> Game {
-    let (game_str, cubes_str) = input.split_once(":").unwrap();
+    let (game_str, cubes_str) = input.split_once(':').unwrap();
 
     let game_id = game_str
         .split_whitespace()
@@ -28,7 +28,7 @@ fn parse_game(input: &str) -> Game {
         .unwrap();
 
     let mut cubes = Vec::new();
-    for cube_str in cubes_str.split(";") {
+    for cube_str in cubes_str.split(';') {
         let cube = parse_cube(cube_str);
         cubes.push(cube);
     }
@@ -41,7 +41,7 @@ fn parse_cube(input: &str) -> Cube {
     let mut blue = 0;
     let mut green = 0;
 
-    let cubes = input.split(",").map(|s| s.trim());
+    let cubes = input.split(',').map(|s| s.trim());
     for c in cubes {
         let mut w = c.split_whitespace();
         let count = w.next().unwrap();
@@ -116,15 +116,14 @@ mod part1 {
 
         games
             .iter()
-            .map(|game| {
+            .filter_map(|game| {
                 if is_possible(game) {
                     Some(game.id)
                 } else {
                     None
                 }
             })
-            .filter_map(|id| id)
-            .fold(0, |acc, id| acc + id)
+            .sum()
     }
 
     #[cfg(test)]
@@ -168,10 +167,7 @@ mod part2 {
             games.push(game);
         }
 
-        games
-            .iter()
-            .map(|game| solve_game(game))
-            .fold(0, |acc, min| acc + min)
+        games.iter().map(solve_game).sum()
     }
 
     #[cfg(test)]
