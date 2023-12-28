@@ -1,6 +1,7 @@
 fn main() {
     let input = include_str!("./day03.txt");
     println!("day03 part1: {}", part1::solve(input));
+    println!("day03 part2: {}", part2::solve(input));
 }
 
 struct Engine {
@@ -33,6 +34,19 @@ impl Engine {
             false
         } else {
             true
+        }
+    }
+
+    pub fn is_gear(&self, x: i32, y: i32) -> bool {
+        if x < 0 || x >= self.width() || y < 0 || y >= self.height() {
+            return false;
+        }
+
+        let c = self.lines[y as usize][x as usize];
+        if c == '*' {
+            true
+        } else {
+            false
         }
     }
 
@@ -85,6 +99,19 @@ struct Number {
     pub y: i32,
     pub start_x: i32,
     pub end_x: i32,
+}
+impl Number {
+    pub fn is_adjacent(&self, x: i32, y: i32) -> bool {
+        if y > self.y + 1 || y < self.y - 1 {
+            return false;
+        }
+
+        if x < self.start_x - 1 || x > self.end_x + 1 {
+            return false;
+        }
+
+        true
+    }
 }
 
 #[cfg(test)]
@@ -174,6 +201,7 @@ mod part1 {
 
     #[cfg(test)]
     mod test {
+        use super::*;
 
         #[test]
         fn test_solve_sample() {
@@ -187,13 +215,64 @@ mod part1 {
 ......755.
 ...$.*....
 .664.598.."#;
-            assert_eq!(super::solve(input_str), 4361);
+            assert_eq!(solve(input_str), 4361);
         }
 
         #[test]
         fn test_solve() {
             let input_str = include_str!("./day03.txt");
-            assert_eq!(super::solve(input_str), 532428);
+            assert_eq!(solve(input_str), 532428);
+        }
+    }
+}
+
+mod part2 {
+    use super::*;
+
+    pub fn solve(input: &str) -> i32 {
+        let engine = Engine::new(input);
+        let numbers = engine.get_numbers();
+        let mut sum = 0;
+        for y in 0..engine.height() {
+            for x in 0..engine.width() {
+                if engine.is_gear(x, y) {
+                    let gear_numbers = numbers
+                        .iter()
+                        .filter(|n| n.is_adjacent(x, y))
+                        .collect::<Vec<_>>();
+
+                    if gear_numbers.len() == 2 {
+                        sum += gear_numbers[0].value * gear_numbers[1].value;
+                    }
+                }
+            }
+        }
+        sum
+    }
+
+    #[cfg(test)]
+    mod test {
+        use super::*;
+
+        #[test]
+        fn test_solve_sample() {
+            let input_str = r#"467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598.."#;
+            assert_eq!(solve(input_str), 467835);
+        }
+
+        #[test]
+        fn test_solve() {
+            let input_str = include_str!("./day03.txt");
+            assert_eq!(solve(input_str), 84051670);
         }
     }
 }
